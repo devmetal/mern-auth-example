@@ -11,9 +11,20 @@ const localOptions = {
 };
 
 const jwtOptions = {
-   jwtFromRequest: ExtractJwt.fromAuthHeader(),
-   secretOrKey: 'secret'
+  jwtFromRequest: ExtractJwt.fromAuthHeader(),
+  secretOrKey: 'secret'
 };
+
+const jwtSessionOptions = {
+  jwtFromRequest: (req) => {
+    let token = null;
+    if (req && req.session) {
+      token = req.session.token;
+    }
+    return token;
+  },
+  secretOrKey: 'secret'
+}
 
 const localCallback = (req, email, pass, done) => {
    User.findOne({email})
@@ -54,7 +65,12 @@ const jwtStrategy = new JwtStrategy(
    jwtOptions, jwtCallback
 );
 
+const jwtSessionStrategy = new JwtStrategy(
+  jwtSessionOptions, jwtCallback
+);
+
 passport.use('local', localStrategy);
 passport.use('jwt', jwtStrategy);
+passport.use('jwt-session', jwtSessionStrategy)
 
 export default passport;

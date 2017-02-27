@@ -61,11 +61,6 @@ app.use(bodyParser.json({ limit: '20mb' }));
 app.use(bodyParser.urlencoded({ limit: '20mb', extended: false }));
 app.use(Express.static(path.resolve(__dirname, '../static')));
 app.use(passport.initialize());
-app.use((req, res, next) => {
-  console.log('token');
-  console.log(req.session.token);
-  next();
-});
 app.use('/api', posts);
 app.use('/auth', auth);
 
@@ -119,7 +114,8 @@ app.use((req, res) => {
       return res.status(404).end('Not found!');
     }
 
-    return fetchComponentData(store.dispatch, renderProps.components, renderProps.params)
+    return fetchIsAuthenticated(store.dispatch, req, passport)
+      .then(() => fetchComponentData(store.dispatch, renderProps.components, renderProps.params))
       .then(() => {
         const initialView = renderToString(
           <Provider store={store}>

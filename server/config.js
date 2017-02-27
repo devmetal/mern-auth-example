@@ -1,5 +1,5 @@
 const config = {
-  mongoURL: process.env.MONGO_URL || 'mongodb://metal:jjkka356met@ds015398.mlab.com:15398/devblog',
+  mongoURL: process.env.MONGO_URL || '',
   port: process.env.PORT || 8000,
 };
 
